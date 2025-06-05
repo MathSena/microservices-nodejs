@@ -1,0 +1,9 @@
+{
+  "schema": "src/db/schema/*",
+  "out": "src/db/migrations",
+  "dialect": "postgresql",
+  "dbCredentials": {
+    "url": "postgres://docker:docker@localhost:5482/orders"
+  },
+  "casing": "snake_case"
+}
