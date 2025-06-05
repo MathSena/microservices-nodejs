@@ -8,6 +8,13 @@
       "when": 1749082927474,
       "tag": "0000_dapper_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749167340689,
+      "tag": "0001_curly_venom",
+      "breakpoints": true
     }
   ]
 }

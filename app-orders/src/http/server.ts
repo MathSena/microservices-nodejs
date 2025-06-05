@@ -1,4 +1,5 @@
 import { fastify } from 'fastify'
+import { randomUUID } from 'node:crypto'
 import { fastifyCors } from '@fastify/cors'
 import { z } from 'zod'
 import { channels } from '../broker/channels/index.ts'
@@ -8,21 +9,27 @@ import {
   validatorCompiler,
   type ZodTypeProvider
 } from 'fastify-type-provider-zod'
+import { db } from '../db/client.ts'
+import { schema } from '../db/schema/index.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
+// 📌 Corrigir aqui:
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
 // Configuração do CORS
-app.get('/health', () => {
-  return 'OK'
-})
+app.register(fastifyCors)
 
 app.post(
   '/orders',
   {
     schema: {
-      body: z.object({
-        amount: z.number()
-      })
+      body: z
+        .object({
+          amount: z.number()
+        })
+        .strict()
     }
   },
   async (request, reply) => {
@@ -32,6 +39,13 @@ app.post(
       Buffer.from(JSON.stringify({ amount }))
     )
     console.log('Sent order to queue with amount:', amount)
+
+    await db.insert(schema.orders).values({
+      id: randomUUID(),
+      customerId: '1',
+      amount
+    })
+
     return reply.status(201).send()
   }
 )
