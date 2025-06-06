@@ -11,6 +11,7 @@ import {
 } from 'fastify-type-provider-zod'
 import { db } from '../db/client.ts'
 import { schema } from '../db/schema/index.ts'
+import { dispatchOrderCreated } from '../broker/messages/order-created.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -40,8 +41,18 @@ app.post(
     )
     console.log('Sent order to queue with amount:', amount)
 
+    const orderId = randomUUID()
+
+    dispatchOrderCreated({
+      orderId,
+      amount,
+      customer: {
+        id: '1'
+      }
+    })
+
     await db.insert(schema.orders).values({
-      id: randomUUID(),
+      id: orderId,
       customerId: '1',
       amount
     })
