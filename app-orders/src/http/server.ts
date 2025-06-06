@@ -4,6 +4,8 @@ import { fastifyCors } from '@fastify/cors'
 import { z } from 'zod'
 import { channels } from '../broker/channels/index.ts'
 
+import '@opentelemetry/auto-instrumentations-node/register'
+
 import {
   serializerCompiler,
   validatorCompiler,
